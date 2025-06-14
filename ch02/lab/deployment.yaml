@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+# deploy의 metadata
+metadata:
+  name: whoami  # 이름
+  labels:  # 라벨
+    app: whoami 
+    versino: ch02
+spec:
+  # deploy가 자신의 관리 대상을 정하는 것
+  selector:
+    matchLabels:
+      app: whoami
+      version: ch02
+  # deploy가 pod를 만들 때 사용할 정보
+  template:
+    # 이름은 없고 deploy와 같은 라벨을 지정해야 함
+    metadata:
+      labels:
+        app: whoami
+        version: ch02
+    # 파드 정의에는 컨테이너 이름과 이미지 이름 명시
+    spec:
+      containers:
+      - name: web
+        image: kiamol/ch02-whoami
