@@ -4,11 +4,23 @@ metadata:
   name: todo-web-lab
 spec:
   ports:
-    - port: 80
-      targetPort: 80
+  - port: 80
+    targetPort: 80
   selector:
     app: todo-web-lab
   type: ClusterIP
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: todo-web-lab-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 200Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -24,10 +36,17 @@ spec:
         app: todo-web-lab
     spec:
       containers:
-        - name: web
-          image: kiamol/ch04-todo-list
-          env:
-          - name: Database__Provider
-            value: Sqlite
-          - name: ConnectionStrings__ToDoDb
-            value: "Filename=/data/todo-list-lab.db"
+      - name: web
+        image: kiamol/ch04-todo-list
+        env:
+        - name: Database__Provider
+          value: Sqlite
+        - name: ConnectionStrings__ToDoDb
+          value: "Filename=/data/todo-list-lab.db"
+        volumeMounts:
+        - name: data
+          mountPath: /data
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: todo-web-lab-pvc
